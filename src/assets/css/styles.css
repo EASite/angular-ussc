@@ -1,6 +1,7 @@
 BODY {
   height: 100vh;
   user-select: none;
+  padding-top: 40px;
 }
 LABEL:hover {
   cursor: pointer;
