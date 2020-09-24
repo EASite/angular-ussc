@@ -1,0 +1,120 @@
+<div class="container-fluid h-100">
+  <div class="row h-100 align-items-center justify-content-around">
+      <div class="col col-md-8">
+          <div class="row mb-5 justify-content-between">
+              <form action="" class="col-12 col-md-5">
+                  <h3 class="mb-2">Отображение полей</h3>
+                  <div class="row">
+                      <div class="col col-md-6">
+                          <label>
+                              <input type="checkbox" name="showTitle" value="title" [checked]="visibleCols['title']" (change)="changeColVisibility('title')"> Название
+                          </label>
+                      </div>
+                      <div class="col col-md-6">
+                          <label>
+                              <input type="checkbox" name="showAuthor" value="author" [checked]="visibleCols['author']" (change)="changeColVisibility('author')"> Автор
+                          </label>
+                      </div>
+                      <div class="col col-md-6">
+                          <label>
+                              <input type="checkbox" name="showDescription" value="description" [checked]="visibleCols['description']" (change)="changeColVisibility('description')"> Описание
+                          </label>
+                      </div>
+                      <div class="col col-md-6">
+                          <label>
+                              <input type="checkbox" name="showPrice" value="price" [checked]="visibleCols['price']" (change)="changeColVisibility('price')"> Цена
+                          </label>
+                      </div>
+                  </div>
+              </form>
+
+              <form action="" class="col-12 col-md-5">
+                  <h3 class="mb-2">Фильтр</h3>
+                  <div class="row">
+                      <div class="col">
+                          <label>
+                              Цена: <input type="number" class="input" name="begin_price" placeholder="от" min="1"> - <input type="number" class="input" name="end_price" placeholder="до" min="2">
+                          </label>
+                      </div>
+                  </div>
+              </form>
+          </div>
+
+          <div id="action_message" *ngIf="systemMessage" class="alert alert-success">
+              {{ systemMessage }}
+          </div>
+
+          <table *ngIf="isVisibleItems();else selectVisibleColsMessage">
+              <tr>
+                  <!-- ⥮ -->
+                  <th *ngIf="visibleCols['title']">Название ⮁</th>
+                  <th *ngIf="visibleCols['author']">Автор ⮁</th>
+                  <th *ngIf="visibleCols['description']">Описание</th>
+                  <th *ngIf="visibleCols['price']">Цена ⮁</th>
+                  <th>Действия</th>
+              <tr>
+              <tr *ngFor="let item of items">
+                  <td *ngIf="visibleCols['title']">{{ item.title }}</td>
+                  <td *ngIf="visibleCols['author']">{{ item.author }}</td>
+                  <td class="item__descr" *ngIf="visibleCols['description']">{{ item.description }}</td>
+                  <td *ngIf="visibleCols['price']">{{ item.price }}&nbsp;руб.</td>
+                  <td>
+                      <a href="/edit/{{ item.id }}">Редактировать</a> |
+                      <a href="/delete/{{ item.id }}">Удалить</a>
+                  </td>
+              </tr>
+          </table>
+
+          <ng-template #selectVisibleColsMessage>
+            <div class="alert alert-danger">
+              Выберите хотя бы одно поле для отображения!
+            </div>
+          </ng-template>
+      </div>
+
+      <div class="col col-md-3">
+          <form action="/add" (ngSubmit)="addItem(form); form.reset()" #form="ngForm" method="POST">
+              <h3 class="mb-4">Добавить запись</h3>
+              <div class="row">
+                  <div class="col col-md-3">
+                      Название:
+                  </div>
+                  <div class="col col-md">
+                      <input type="text" name="title" class="w-100" ngModel required>
+                  </div>
+              </div>
+
+              <div class="row mt-2">
+                  <div class="col col-md-3">
+                      Автор:
+                  </div>
+                  <div class="col col-md">
+                      <input type="text" name="author" class="w-100" ngModel required>
+                  </div>
+              </div>
+
+              <div class="row mt-2">
+                  <div class="col col-md-3">
+                      Описание:
+                  </div>
+                  <div class="col col-md">
+                      <textarea name="description" cols="30" rows="10" class="w-100" ngModel></textarea>
+                  </div>
+              </div>
+
+              <div class="row mt-2">
+                  <div class="col col-md-3">
+                      Цена:
+                  </div>
+                  <div class="col col-md">
+                      <input type="text" name="price" class="w-100" ngModel required>
+                  </div>
+              </div>
+
+              <div class="row mt-4 justify-content-center">
+                  <button type="submit" class="btn btn-outline-dark">Добавить</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
