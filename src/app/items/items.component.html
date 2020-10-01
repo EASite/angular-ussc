@@ -1,120 +1,168 @@
-<div class="container-fluid h-100">
-  <div class="row h-100 justify-content-around">
-      <div class="col col-md-8">
-          <div class="row mb-5 justify-content-between">
-              <form action="" class="col-12 col-md-5">
-                  <h3 class="mb-2">Отображение полей</h3>
-                  <div class="row">
-                      <div class="col col-md-6">
-                          <label>
-                              <input type="checkbox" name="showTitle" value="title" [checked]="visibleCols['title']" (change)="changeColVisibility('title')"> Название
-                          </label>
-                      </div>
-                      <div class="col col-md-6">
-                          <label>
-                              <input type="checkbox" name="showAuthor" value="author" [checked]="visibleCols['author']" (change)="changeColVisibility('author')"> Автор
-                          </label>
-                      </div>
-                      <div class="col col-md-6">
-                          <label>
-                              <input type="checkbox" name="showDescription" value="description" [checked]="visibleCols['description']" (change)="changeColVisibility('description')"> Описание
-                          </label>
-                      </div>
-                      <div class="col col-md-6">
-                          <label>
-                              <input type="checkbox" name="showPrice" value="price" [checked]="visibleCols['price']" (change)="changeColVisibility('price')"> Цена
-                          </label>
-                      </div>
-                  </div>
-              </form>
-
-              <form action="" class="col-12 col-md-5">
-                  <h3 class="mb-2">Фильтр</h3>
-                  <div class="row">
-                      <div class="col">
-                          <label>
-                              Цена: <input type="number" class="input" name="begin_price" placeholder="от" min="1"> - <input type="number" class="input" name="end_price" placeholder="до" min="2">
-                          </label>
-                      </div>
-                  </div>
-              </form>
-          </div>
-
-          <div id="action_message" *ngIf="systemMessage" class="alert alert-success">
-              {{ systemMessage }}
-          </div>
-
-          <table *ngIf="isVisibleItems();else selectVisibleColsMessage">
-              <tr>
-                  <!-- ⥮ -->
-                  <th *ngIf="visibleCols['title']">Название ⮁</th>
-                  <th *ngIf="visibleCols['author']">Автор ⮁</th>
-                  <th *ngIf="visibleCols['description']">Описание</th>
-                  <th *ngIf="visibleCols['price']">Цена ⮁</th>
-                  <th>Действия</th>
-              <tr>
-              <tr *ngFor="let item of items">
-                  <td *ngIf="visibleCols['title']">{{ item.title }}</td>
-                  <td *ngIf="visibleCols['author']">{{ item.author }}</td>
-                  <td class="item__descr" *ngIf="visibleCols['description']">{{ item.description }}</td>
-                  <td *ngIf="visibleCols['price']">{{ item.price }}&nbsp;руб.</td>
-                  <td>
-                      <a href="/edit/{{ item.id }}">Редактировать</a> |
-                      <a href="/delete/{{ item.id }}">Удалить</a>
-                  </td>
-              </tr>
-          </table>
-
-          <ng-template #selectVisibleColsMessage>
-            <div class="alert alert-danger">
-              Выберите хотя бы одно поле для отображения!
-            </div>
-          </ng-template>
-      </div>
-
-      <div class="col col-md-3">
-          <form action="/add" (ngSubmit)="addItem(form); form.reset()" #form="ngForm" method="POST">
-              <h3 class="mb-4">Добавить запись</h3>
-              <div class="row">
-                  <div class="col col-md-3">
-                      Название:
-                  </div>
-                  <div class="col col-md">
-                      <input type="text" name="title" class="w-100" ngModel required>
-                  </div>
-              </div>
-
-              <div class="row mt-2">
-                  <div class="col col-md-3">
-                      Автор:
-                  </div>
-                  <div class="col col-md">
-                      <input type="text" name="author" class="w-100" ngModel required>
-                  </div>
-              </div>
-
-              <div class="row mt-2">
-                  <div class="col col-md-3">
-                      Описание:
-                  </div>
-                  <div class="col col-md">
-                      <textarea name="description" cols="30" rows="10" class="w-100" ngModel></textarea>
-                  </div>
-              </div>
-
-              <div class="row mt-2">
-                  <div class="col col-md-3">
-                      Цена:
-                  </div>
-                  <div class="col col-md">
-                      <input type="text" name="price" class="w-100" ngModel required>
-                  </div>
-              </div>
-
-              <div class="row mt-4 justify-content-center">
-                  <button type="submit" class="btn btn-outline-dark">Добавить</button>
-              </div>
-          </form>
-      </div>
+<div class="container-fluid">
+  <div class="d-flex mb-4">
+    <button class="btn btn-outline-dark btn-sm btn-show-add-form mr-2" (click)="showAddForm = !showAddForm">
+      <span *ngIf="showAddForm">-</span>
+      <span *ngIf="!showAddForm">+</span>
+    </button>
+    <h3>Добавить запись</h3>
   </div>
+
+  <form action="/add" (ngSubmit)="addItem(addItemForm)" *ngIf="showAddForm" #addItemForm="ngForm" method="POST">
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <input type="text" name="title" class="input w-100" ngModel placeholder="Название" required>
+      </div>
+
+      <div class="col-12 col-md-4 mt-2 mt-md-0">
+        <input type="text" name="author" class="input w-100" ngModel placeholder="Автор" required>
+      </div>
+
+      <div class="col-12 col-md-4 mt-2 mt-md-0">
+        <input type="text" name="price" class="input w-100" ngModel placeholder="Цена" required>
+      </div>
+
+      <div class="col-12 mt-2">
+          <textarea name="description" class="input input_textarea w-100" ngModel placeholder="Описание"></textarea>
+      </div>
+    </div>
+
+    <div class="row mt-2 justify-content-center">
+      <button type="submit" class="btn btn-outline-dark">Добавить</button>
+    </div>
+  </form>
+
+
+  <div class="row my-5 justify-content-between">
+    <form action="" class="col-12 col-lg-7 col-xl">
+      <h3 class="mb-2">Отображение полей</h3>
+      <div class="row">
+        <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+          <label>
+            <input type="checkbox" name="showTitle" value="title" [checked]="visibleCols['title']" (change)="visibleCols['title'] = !visibleCols['title']"> Название
+          </label>
+        </div>
+        <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+          <label>
+            <input type="checkbox" name="showAuthor" value="author" [checked]="visibleCols['author']" (change)="visibleCols['author'] = !visibleCols['author']"> Автор
+          </label>
+        </div>
+        <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+          <label>
+            <input type="checkbox" name="showDescription" value="description" [checked]="visibleCols['description']" (change)="visibleCols['description'] = !visibleCols['description']"> Описание
+          </label>
+        </div>
+        <div class="col-6 col-md-3 col-lg-6 col-xl-3">
+          <label>
+            <input type="checkbox" name="showPrice" value="price" [checked]="visibleCols['price']" (change)="visibleCols['price'] = !visibleCols['price']"> Цена
+          </label>
+        </div>
+      </div>
+    </form>
+
+    <form action="" #filtersForm="ngForm" class="col-12 col-lg-5 col-xl-4">
+      <div class="row align-items-baseline mx-0 mb-2">
+        <h3>Фильтр</h3>
+        <button class="btn btn-sm btn-plain btn-reset-filters ml-1" (click)="filtersForm.reset(); getItems()">(сбросить)</button>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label>
+            Цена:
+            <input type="number" class="input input_price-filter" name="beginPrice" placeholder="от" min="1" [(ngModel)]="filters['beginPrice']" (input)="getItems()"> -
+            <input type="number" class="input input_price-filter" name="endPrice" placeholder="до" min="2" [(ngModel)]="filters['endPrice']" (input)="getItems()">
+          </label>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="action_message" *ngIf="systemMessage" class="alert alert-{{ systemMessageType }}">
+    {{ systemMessage }}
+  </div>
+
+
+  <ng-template #pagination>
+    <ngb-pagination *ngIf="isVisibleTable()" class="d-flex justify-content-center mt-4"
+      [collectionSize]="items.length"
+      [(page)]="curPage"
+      [pageSize]="itemsOnPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="getItems(config)"
+      size="sm"
+      aria-label="Default pagination">
+        <ng-template ngbPaginationFirst> « </ng-template>
+        <ng-template ngbPaginationLast> » </ng-template>
+        <ng-template ngbPaginationPrevious> ‹ </ng-template>
+        <ng-template ngbPaginationNext> › </ng-template>
+        <ng-template ngbPaginationEllipsis>...</ng-template>
+        <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+    </ngb-pagination>
+  </ng-template>
+
+  <ng-template #insteadTableMessage>
+    <div class="alert alert-danger" *ngIf="items.length > 0">
+      Выберите хотя бы одно поле для отображения.
+    </div>
+    <div class="alert alert-danger" *ngIf="items.length == 0">
+      Не найдено ни одной записи.
+    </div>
+  </ng-template>
+
+
+  <ng-content *ngTemplateOutlet="pagination"></ng-content>
+
+  <table *ngIf="isVisibleTable();else insteadTableMessage">
+    <tr>
+      <!-- ⥮ ⮁ -->
+      <th *ngIf="visibleCols['title']" (click)="sortItems('title')">Название ⥮</th>
+      <th *ngIf="visibleCols['author']" (click)="sortItems('author')">Автор ⥮</th>
+      <th *ngIf="visibleCols['description']">Описание</th>
+      <th *ngIf="visibleCols['price']" (click)="sortItems('price')">Цена ⥮</th>
+      <th>Действия</th>
+    <tr>
+    <tr *ngFor="let item of items | slice: (curPage - 1) * itemsOnPage : (curPage - 1) * itemsOnPage + itemsOnPage;">
+
+      <ng-container *ngIf="editedItem != item.id">
+        <td *ngIf="visibleCols['title']">{{ item.title }}</td>
+        <td *ngIf="visibleCols['author']">{{ item.author }}</td>
+        <td class="item__descr" *ngIf="visibleCols['description']">{{ item.description }}</td>
+        <td *ngIf="visibleCols['price']">{{ item.price }}&nbsp;руб.</td>
+      </ng-container>
+
+      <ng-container *ngIf="editedItem == item.id">
+        <td colspan="4" *ngIf="visibleCols['title']">
+          <form id="editForm" action="" (ngSubmit)="saveItem(saveItemForm)" #saveItemForm="ngForm" method="POST">
+            <div class="row">
+              <div class="col-12 col-md-4 order-1 order-md-1">
+                <input type="hidden" name="id" ngModel="{{ item.id }}">
+                <input type="text" class="input" name="title" ngModel="{{ item.title }}" form="editForm" required placeholder="Название">
+              </div>
+              <div class="col-12 col-md-4 mt-2 mt-md-0 order-2 order-md-2">
+                <input type="text" class="input" name="author" ngModel="{{ item.author }}" form="editForm" required placeholder="Автор">
+              </div>
+              <div class="col-12 col-md-12 mt-2 order-3 order-md-4">
+                <textarea class="input input_textarea" name="description" ngModel="{{ item.description }}" form="editForm" required placeholder="Описание"></textarea>
+              </div>
+              <div class="col-12 col-md-4 order-4 order-md-3">
+                <input type="text" class="input" name="price" ngModel="{{ item.price }}" form="editForm" required placeholder="Цена">
+              </div>
+            </div>
+          </form>
+        </td>
+      </ng-container>
+
+      <td>
+        <div class="d-flex justify-content-around">
+          <button class="btn btn-sm btn-outline-dark" *ngIf="editedItem != item.id" (click)="editedItem = item.id">Изменить</button>
+          <button class="btn btn-sm btn-outline-dark" form="editForm" *ngIf="editedItem == item.id">Сохранить</button>
+          <button class="btn btn-sm btn-outline-dark ml-2" (click)="deleteItem(item.id)">Удалить</button>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <ng-content *ngTemplateOutlet="pagination"></ng-content>
 </div>
