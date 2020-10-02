@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { ItemsService } from '../items.service';
 
 @Component({
@@ -9,13 +10,14 @@ import { ItemsService } from '../items.service';
 })
 export class ItemsComponent implements OnInit {
 
-  items: any = [];
+  items: Observable<any>;
   showAddForm: boolean = false;
   editedItem: number;
   systemMessage: string;
   systemMessageType: string = 'success';
   curPage: number = 1;
   itemsOnPage: number = 10;
+  totalItemsCount: number;
   config: Object = {
     sortBy: 'title',
     sortDir: 'ASC',
@@ -32,10 +34,12 @@ export class ItemsComponent implements OnInit {
   };
 
   constructor(private item:ItemsService) {
-    this.getItems();
+    // this.getItems();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getItems();
+  }
 
   getItems() {
     if (this.filters['beginPrice'] && this.filters['endPrice'] && this.filters['beginPrice'] > this.filters['endPrice']) {
@@ -45,8 +49,10 @@ export class ItemsComponent implements OnInit {
 
     this.systemMessage = '';
 
-    this.item.getItems(this.filters, this.config).subscribe(data => {
-      this.items = data;
+    this.item.getItems(this.curPage, this.itemsOnPage, this.filters, this.config).subscribe(data => {
+      this.items = data['items'];
+      this.totalItemsCount = data['totalItemsCount'];
+      console.log(data['totalItemsCount'], data['items']);
     });
   }
 
@@ -78,7 +84,8 @@ export class ItemsComponent implements OnInit {
 
   addItem(form: NgForm) {
     this.item.addItem(form.value).subscribe(res => {
-      this.items.push(form.value);
+      // this.items.push(form.value);
+      this.getItems();
 
       this.showSystemMessage(`Запись "${form.value.title}" добавлена!`);
 
@@ -88,9 +95,10 @@ export class ItemsComponent implements OnInit {
 
   saveItem(form: NgForm) {
     this.item.saveItem(form.value).subscribe(res => {
-      let itemForSaveIndex = this.items.findIndex(item => item.id == form.value['id']);
+      // let itemForSaveIndex = this.items.findIndex(item => item.id == form.value['id']);
 
-      this.items[itemForSaveIndex] = form.value;
+      // this.items[itemForSaveIndex] = form.value;
+      this.getItems();
 
       delete this.editedItem;
 
@@ -101,9 +109,10 @@ export class ItemsComponent implements OnInit {
   deleteItem(id: number) {
     if ( confirm('Запись будет удалена без возможности восстановления.') ) {
       this.item.deleteItem(id).subscribe(data => {
-        let itemForDeleteIndex = this.items.findIndex(item => item.id === id);
+        // let itemForDeleteIndex = this.items.findIndex(item => item.id === id);
 
-        this.items.splice(itemForDeleteIndex, 1);
+        // this.items.splice(itemForDeleteIndex, 1);
+        this.getItems();
         this.showSystemMessage(`Запись удалена!`);
       });
     }
@@ -114,8 +123,8 @@ export class ItemsComponent implements OnInit {
         ( this.visibleCols['title'] ||
           this.visibleCols['author'] ||
           this.visibleCols['description'] ||
-          this.visibleCols['price'] ) &&
-        this.items.length > 0
+          this.visibleCols['price'] ) /*&&
+        this.items.length > 0*/
       );
   }
 }

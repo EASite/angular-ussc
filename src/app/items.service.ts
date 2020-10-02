@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { shareReplay } from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,8 @@ export class ItemsService {
 
   constructor(private http:HttpClient) { }
 
-  getItems(filters: Object, config: Object) {
-    return this.http.post("http://ussc/getItems", Object.assign(filters, config));
+  getItems(curPage: number, itemsOnPage: number, filters: Object, config: Object) {
+    return this.http.post("http://ussc/getItems", Object.assign(filters, config, {'curPage': curPage, 'itemsOnPage': itemsOnPage})).pipe(shareReplay());
   }
 
   filterItems(data: Object, config: Object) {

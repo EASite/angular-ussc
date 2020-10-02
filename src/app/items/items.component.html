@@ -84,7 +84,7 @@
 
   <ng-template #pagination>
     <ngb-pagination *ngIf="isVisibleTable()" class="d-flex justify-content-center mt-4"
-      [collectionSize]="items.length"
+      [collectionSize]="totalItemsCount"
       [(page)]="curPage"
       [pageSize]="itemsOnPage"
       [maxSize]="5"
@@ -123,7 +123,7 @@
       <th *ngIf="visibleCols['price']" (click)="sortItems('price')">Цена ⥮</th>
       <th>Действия</th>
     <tr>
-    <tr *ngFor="let item of items | slice: (curPage - 1) * itemsOnPage : (curPage - 1) * itemsOnPage + itemsOnPage;">
+    <tr *ngFor="let item of (items | async) | slice: (curPage - 1) * itemsOnPage : (curPage - 1) * itemsOnPage + itemsOnPage;">
 
       <ng-container *ngIf="editedItem != item.id">
         <td *ngIf="visibleCols['title']">{{ item.title }}</td>
